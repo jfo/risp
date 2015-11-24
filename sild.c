@@ -22,19 +22,18 @@ char* readfile() {
     return buffer;
 }
 
-char* parenthesize(char * input, char **list) {
+void parenthesize(char * input ) {
     char* form[1048];
     for(int i = 0; i < strlen(input); i++) {
+        printf("%c", input[i]);
     }
 }
 
 int main() {
 
-    char *thingy = readfile();
-    char **thingy2 = ;
+    char * thingy = readfile();
     if (thingy) {
-          // start to process your data / extract strings here...
-          parenthesize(thingy, thingy2 );
+          parenthesize(thingy);
     }
 
     /* char c; */
