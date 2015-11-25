@@ -11,9 +11,8 @@ node makelist(){
     char c;
     if ((c = getchar()) != EOF) {
         output.value = c;
-        node *next = malloc(sizeof(node))
+        node *next = malloc(sizeof(node));
         next2 = makelist();
-        next2
         output.next = next;
     } else {
         output.value = 'H';
