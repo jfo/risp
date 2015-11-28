@@ -10,9 +10,9 @@ typedef struct list {
 } list;
 
 int count_list(char* s) {
-    int depth = 0;
+    int depth = 1;
     int i;
-    for (i = 0; (depth == 0 && s[i] == ')'); i++) {
+    for (i = 1; (depth != 0 && s[i] != ')' && s[i] != '\0'); i++) {
         if (s[i] == '(') {
             depth++;
         } else if (s[i] == ')') {
@@ -58,6 +58,7 @@ void printlist(list* l) {
 }
 
 int main(){
-    printlist(make_list_from_string("(t(l))"));
+    /* printlist(make_list_from_string("(t(l))")); */
+    printf("%i", count_list(""));
     return 0;
 }

@@ -6,4 +6,3 @@ class List
         @nexts = nexts
     end
 end
-

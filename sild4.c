@@ -1,63 +1,71 @@
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 
 enum { TERM, ATOM, LIST };
-typedef struct list {
+typedef struct node {
     int value_type;
     char atom_value;
-    struct list* list_value;
-    struct list* next_item;
-} list;
+    struct node* list_value;
+    struct node* next_item;
+} node;
 
 int count_list(char* s) {
-    int depth = 0;
-    int i;
-    for (i = 0; (depth == 0 && s[i] == ')'); i++) {
+    int depth = 1;
+    int count = 0;
+    for (int i = 1; depth != 0; i++) {
         if (s[i] == '(') {
             depth++;
         } else if (s[i] == ')') {
             depth--;
         }
+        count++;
     }
-    return i + 2;
+    return count + 1;
 }
 
-list* make_list_from_string(char* s) {
-    list* out = malloc(sizeof(list));
+node * make_node(char* s) {
+    node* out = malloc(sizeof(node));
 
-    if (s[0] == '(') {
+    if (s[0] == '\0') {
+        out->value_type = TERM;
+    } else if (s[0] == '(') {
         out->value_type = LIST;
-        out->list_value = make_list_from_string(s + 1);
-        out->next_item = make_list_from_string(s + 1 + (count_list(s) ));
+        out->list_value = make_node(s + 1);
+        out->next_item = make_node(s + count_list(s));
+    } else if (s[0] == ')') {
     } else if (s[1] == ')') {
         out->value_type = ATOM;
         out->atom_value = s[0];
-    } else if (s[0] == '\0') {
-        out->value_type = TERM;
-        return out;
     } else {
         out->value_type = ATOM;
         out->atom_value = s[0];
-        out->next_item = make_list_from_string(s+1);
+        out->next_item = make_node(s + 1);
     }
+
     return out;
 }
 
-void printlist(list* l) {
-    if (l->value_type == LIST) {
-        printf("LIST: %p, %c\n", l->list_value, l->atom_value);
-        printlist(l->list_value);
-        printlist(l->next_item);
-    } else if (l->value_type == ATOM) {
-        printf("ATOM: %p, %c\n", l->list_value, l->atom_value);
-        if (l->next_item == NULL) { return; }
-        printlist(l->next_item);
-    } else if (l->value_type == TERM) {
-        printf("TERM");
+void print_list(node* n) {
+    if (n == NULL) {
+        printf("CLOSE LIST\n");
+        return;
+    } else if (n->value_type == TERM) {
+        printf("TERM\n");
+        return;
+    } else if (n->value_type == LIST) {
+        printf("OPEN LIST ===");
+        printf("LIST: %p\n", n->list_value);
+        print_list(n->list_value);
+        print_list(n->next_item);
+    } else if (n->value_type == ATOM) {
+        printf("ATOM: %c\n", n->atom_value);
+        print_list(n->next_item);
     }
 }
 
 int main(){
-    printlist(make_list_from_string("(t(l))"));
+    print_list(make_node("(1(23))"));
+    /* printf("%i", count_list("(thing)")); */
     return 0;
 }
