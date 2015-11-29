@@ -11,7 +11,7 @@ struct node;
 
 /* a node_val can either be a char (eventually I'll support ints duh and strings of arbitrary length)) or a pointer to a new list */
 union node_val {
-    char c;
+    char* c;
     struct node* list;
 };
 
@@ -37,11 +37,51 @@ int count_list(char* s) {
     return count + 1;
 }
 
+int count_string_length(char* s){
+    int i;
+    for (i = 0;
+            (
+             s[i] != '\0'
+             &&
+             s[i] != ')'
+             &&
+             s[i] != '('
+             &&
+             s[i] != ' '
+             &&
+             s[i] != '\n'
+             &&
+             s[i] != ','
+             &&
+             s[i] != ';'
+             );
+            i++) {
+    }
+    return i;
+}
 char* return_string(char* s){
-    char* out;
-    for (int i = 0; (s[i] != ')' && s[i] != '(' && !isspace(s[i])); i++) {
+    char* out = malloc(count_string_length(s));
+    int i;
+    for (i = 0;
+            (
+             s[i] != '\0'
+             &&
+             s[i] != ')'
+             &&
+             s[i] != '('
+             &&
+             s[i] != ' '
+             &&
+             s[i] != '\n'
+             &&
+             s[i] != ','
+             &&
+             s[i] != ';'
+             );
+            i++) {
         out[i] = s[i];
     }
+    out[i] = '\0';
     return out;
 }
 
@@ -69,8 +109,8 @@ node * makelist(char* s) {
     } else {
         node* output = malloc(sizeof(node));
         output->type = ATOM;
-        output->car.c = s[0];
-        output->cdr = makelist(s + 1);
+        output->car.c = return_string(s);
+        output->cdr = makelist(s + 1 + count_string_length(s));
         return output;
     }
 }

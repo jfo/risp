@@ -19,7 +19,7 @@ void debuglist(node* l, int depth) {
         debuglist(l->cdr, depth);
     } else if (l->type == ATOM) {
         printtabs(depth);
-        printf("ATOM: car=%c, cdr=%p  \n", l->car.c, l->cdr);
+        printf("ATOM: car=%s, cdr=%p  \n", l->car.c, l->cdr);
         debuglist(l->cdr, depth++);
     }
 }
@@ -32,7 +32,7 @@ void printlist(node* l) {
         printlist(l->car.list);
         printlist(l->cdr);
     } else if (l->type == ATOM) {
-        printf(" %c ", l->car.c);
+        printf(" %s ", l->car.c);
         printlist(l->cdr);
     }
 }
