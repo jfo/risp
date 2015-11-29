@@ -37,8 +37,16 @@ int count_list(char* s) {
     return count + 1;
 }
 
+char* return_string(char* s){
+    char* out;
+    for (int i = 0; (s[i] != ')' && s[i] != '(' && !isspace(s[i])); i++) {
+        out[i] = s[i];
+    }
+    return out;
+}
+
 node * makelist(char* s) {
-    if (s[0] == ' ') {
+    if (s[0] == ' ' || s[0] == '\n') {
         return makelist(s+1);
     } else if (s[0] == '\0') {
         node* output = malloc(sizeof(node));

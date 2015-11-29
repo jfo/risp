@@ -7,8 +7,12 @@ void printtabs(int depth) {
 void debuglist(node* l, int depth) {
     if (l->type == TERM) {
         printtabs(depth - 1);
-        printf("------------TERM------------\n");
+        printf("TERM: car=%p, cdr=%p  \n", l->car.list, l->cdr);
+        printtabs(depth - 1);
+        printf("-----------------------------\n");
     } else if (l->type == LIST) {
+        printtabs(depth);
+        printf("-----------------------------\n");
         printtabs(depth);
         printf("LIST: car=%p, cdr=%p  \n", l->car.list, l->cdr);
         debuglist(l->car.list, depth + 1);
