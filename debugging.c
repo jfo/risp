@@ -32,6 +32,7 @@ void debuglist(node* l) {
 void printlist(node* l) {
     if (l->type == TERM) {
         printf(")");
+    } else if (l->type == FINAL_TERM) {
     } else if (l->type == LIST) {
         printf("(");
         printlist(l->car.list);

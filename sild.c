@@ -27,7 +27,7 @@ char* readfile(char* filename) {
 }
 
 node** parse_string(char* s) {
-    node **output = malloc(sizeof(node));
+    node **output = malloc(sizeof(node) * 100);
     int output_i = 0;
     for (int i = 0; s[i] != '\0'; i++) {
         if (s[i] == '(') {
@@ -44,10 +44,16 @@ node** parse_string(char* s) {
 int main(){
 
     char* input = readfile("test.sld");
-
     node** thing = parse_string(input);
-    for (int i = 0; i < 100; i++) {
+
+    for (int i = 0; i < 9; i++) {
+        printlist(thing[i]);
+        getchar();
+    }
+
+    for (int i = 0; i < 9; i++) {
         debuglist(thing[i]);
+        getchar();
     }
 
     return 0;
