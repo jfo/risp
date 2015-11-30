@@ -86,7 +86,7 @@ char* return_string(char* s){
 }
 
 node * makelist(char* s) {
-    if (s[0] == ' ' || s[0] == '\n') {
+    if (s[0] == ' ' || s[0] == '\n' || s[0] == ',') {
         return makelist(s+1);
     } else if (s[0] == '\0') {
         node* output = malloc(sizeof(node));
@@ -110,7 +110,7 @@ node * makelist(char* s) {
         node* output = malloc(sizeof(node));
         output->type = ATOM;
         output->car.c = return_string(s);
-        output->cdr = makelist(s + 1 + count_string_length(s));
+        output->cdr = makelist(s + count_string_length(s));
         return output;
     }
 }

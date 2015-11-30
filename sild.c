@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 char* readfile(char* filename) {
     char * buffer = 0;
     long length;
@@ -27,12 +26,29 @@ char* readfile(char* filename) {
     return buffer;
 }
 
+node** parse_string(char* s) {
+    node **output = malloc(sizeof(node));
+    int output_i = 0;
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] == '(') {
+            char* temp_list = &s[i];
+            temp_list[count_list(temp_list)] = '\0';
+            output[output_i] = makelist(temp_list);
+            output_i++;
+            i += count_list(s + i);
+        }
+    }
+    return output;
+}
+
 int main(){
 
-    char* test = readfile("test.sld");
-    node* testlist = makelist(test);
-    printf("\n");
-    debuglist(testlist, 0);
+    char* input = readfile("test.sld");
+
+    node** thing = parse_string(input);
+    for (int i = 0; i < 100; i++) {
+        debuglist(thing[i]);
+    }
 
     return 0;
 }

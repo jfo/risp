@@ -4,24 +4,29 @@ void printtabs(int depth) {
     }
 }
 
-void debuglist(node* l, int depth) {
+void debuglistinner(node* l, int depth) {
     if (l->type == TERM) {
         printtabs(depth - 1);
         printf("TERM: car=%p, cdr=%p  \n", l->car.list, l->cdr);
         printtabs(depth - 1);
         printf("-----------------------------\n");
+    } else if (l->type == FINAL_TERM) {
     } else if (l->type == LIST) {
         printtabs(depth);
         printf("-----------------------------\n");
         printtabs(depth);
         printf("LIST: car=%p, cdr=%p  \n", l->car.list, l->cdr);
-        debuglist(l->car.list, depth + 1);
-        debuglist(l->cdr, depth);
+        debuglistinner(l->car.list, depth + 1);
+        debuglistinner(l->cdr, depth);
     } else if (l->type == ATOM) {
         printtabs(depth);
         printf("ATOM: car=%s, cdr=%p  \n", l->car.c, l->cdr);
-        debuglist(l->cdr, depth++);
+        debuglistinner(l->cdr, depth++);
     }
+}
+
+void debuglist(node* l) {
+    debuglistinner(l, 0);
 }
 
 void printlist(node* l) {
