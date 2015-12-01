@@ -6,21 +6,23 @@ void printtabs(int depth) {
 
 void debuglistinner(node* l, int depth) {
     if (l->type == TERM) {
-        printtabs(depth - 1);
-        printf("TERM: car=%p, cdr=%p  \n", l->car.list, l->cdr);
+        printtabs(depth);
+        printf("TERM: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
         printtabs(depth - 1);
         printf("-----------------------------\n");
     } else if (l->type == FINAL_TERM) {
+        printf("FINAL_TERM: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
+        printf("-----------------------------\n");
     } else if (l->type == LIST) {
         printtabs(depth);
         printf("-----------------------------\n");
         printtabs(depth);
-        printf("LIST: car=%p, cdr=%p  \n", l->car.list, l->cdr);
+        printf("LIST: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
         debuglistinner(l->car.list, depth + 1);
         debuglistinner(l->cdr, depth);
     } else if (l->type == ATOM) {
         printtabs(depth);
-        printf("ATOM: car=%s, cdr=%p  \n", l->car.c, l->cdr);
+        printf("ATOM: addr:%p, car=%s, cdr=%p  \n", l, l->car.c, l->cdr);
         debuglistinner(l->cdr, depth++);
     }
 }
