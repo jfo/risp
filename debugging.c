@@ -7,23 +7,23 @@ void printtabs(int depth) {
 void debuglistinner(node* l, int depth) {
     if (l->type == TERM) {
         printtabs(depth);
-        printf("TERM: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
+        printf("TERM: addr:%p, value=%p, next_item=%p  \n", l, l->value.list, l->next_item);
         printtabs(depth - 1);
         printf("-----------------------------\n");
     } else if (l->type == FINAL_TERM) {
-        printf("FINAL_TERM: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
+        printf("FINAL_TERM: addr:%p, value=%p, next_item=%p  \n", l, l->value.list, l->next_item);
         printf("-----------------------------\n");
     } else if (l->type == LIST) {
         printtabs(depth);
         printf("-----------------------------\n");
         printtabs(depth);
-        printf("LIST: addr:%p, car=%p, cdr=%p  \n", l, l->car.list, l->cdr);
-        debuglistinner(l->car.list, depth + 1);
-        debuglistinner(l->cdr, depth);
+        printf("LIST: addr:%p, value=%p, next_item=%p  \n", l, l->value.list, l->next_item);
+        debuglistinner(l->value.list, depth + 1);
+        debuglistinner(l->next_item, depth);
     } else if (l->type == ATOM) {
         printtabs(depth);
-        printf("ATOM: addr:%p, car=%s, cdr=%p  \n", l, l->car.c, l->cdr);
-        debuglistinner(l->cdr, depth++);
+        printf("ATOM: addr:%p, value=%s, next_item=%p  \n", l, l->value.atom, l->next_item);
+        debuglistinner(l->next_item, depth++);
     }
 }
 
@@ -37,10 +37,10 @@ void printlist(node* l) {
     } else if (l->type == FINAL_TERM) {
     } else if (l->type == LIST) {
         printf("(");
-        printlist(l->car.list);
-        printlist(l->cdr);
+        printlist(l->value.list);
+        printlist(l->next_item);
     } else if (l->type == ATOM) {
-        printf(" %s ", l->car.c);
-        printlist(l->cdr);
+        printf(" %s ", l->value.atom);
+        printlist(l->next_item);
     }
 }

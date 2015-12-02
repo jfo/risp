@@ -1,6 +1,10 @@
 #include <stdio.h>
 
-int main(int argc, char *argv[], char ** third, int null){
-    printf("%s\n%i", argv[0], argc);
+typedef enum {
+    thing = 1,
+    thing2 = 1 << 1,
+} butts;
+
+int main(){
     return 0;
 }
