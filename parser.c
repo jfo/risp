@@ -4,7 +4,7 @@
 #define TRUE 1
 #define FALSE 0
 
-enum { FINAL_TERM, TERM, ATOM, LIST };
+enum { TERM, ATOM, LIST };
 
 union node_val {
     char* atom;
