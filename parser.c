@@ -17,7 +17,8 @@ typedef struct node {
     struct node* next_item;
 } node;
 
-node empty_list = {TERM, {NULL}, NULL};
+node empty_list = { TERM, {NULL}, NULL };
+node truth = { ATOM, {"t"}, &empty_list };
 
 int count_list(char* s) {
     int depth = 1;

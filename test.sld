@@ -1,6 +1,8 @@
 this is a comment, since it is outside of any form, weird!
 
-(this is a list)
+(what about empty lists?)
+()
+(this is a list ())
 
 (lists can have (lists) as members)
 
