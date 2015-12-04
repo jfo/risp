@@ -21,7 +21,7 @@ node* copy_node(node* n) {
         node* output = malloc(sizeof(node));
         output->type = ATOM;
         output->value.atom = n->value.atom;
-        output->next_item = n->next_item;
+        output->next_item = copy_node(n->next_item);
         return output;
     } else {
         return &empty_list;
@@ -105,6 +105,18 @@ node* car(node* operand) {
     }
 }
 
+node* cdr(node* operand) {
+    if (operand->type == LIST && operand->next_item == &empty_list) {
+        node* output = malloc(sizeof(node));
+        output->type = LIST;
+        output->value.list = copy_node(operand->value.list->next_item);
+        output->next_item = &empty_list;
+        return output;
+    } else {
+        return &empty_list;
+    }
+}
+
 node* eval(node* n) {
     node* operator = n->value.list;
     node* operands = n->value.list->next_item;
@@ -117,6 +129,8 @@ node* eval(node* n) {
         return eq(operands);
     } else if (strcmp(operator->value.atom, "car") == 0) {
         return car(operands);
+    } else if (strcmp(operator->value.atom, "cdr") == 0) {
+        return cdr(operands);
     }
 
     return &empty_list;
@@ -124,7 +138,7 @@ node* eval(node* n) {
 
 
 int main(){
-    node* test = makelist("(car ((2 3 4) 6))");
+    node* test = makelist("(cdr (3 4 3 7 7 7))");
     debuglist(test);
     printf("\n\n\n");
     debuglist(eval(test));
