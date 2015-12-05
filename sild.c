@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
+node* eval();
+
 void syntax_error(char* err) {
     printf("\nSyntax Error: %s", err);
 }
@@ -67,45 +69,51 @@ node* atom(node* operand) {
 }
 
 node* eq(node* operand) {
+
+    node* first = eval(operand);
+    node* second = eval(operand->next_item);
+
     if (
-            (
-             (operand->type == LIST && operand->value.list == &empty_list)
-             &&
-             (operand->next_item->type == LIST && operand->next_item->value.list == &empty_list)
-             &&
-             operand->next_item->next_item == &empty_list
-            )
-            ||
-            (
-             operand->type == ATOM
-             &&
-             operand->next_item->type == ATOM
-             &&
-             strcmp(operand->value.atom, operand->next_item->value.atom) == 0
-             &&
-             operand->next_item->next_item == &empty_list
-            )
+            (first->type == LIST && first->value.list == &empty_list)
+            &&
+            (second->type == LIST && second->value.list == &empty_list)
+            &&
+            operand->next_item->next_item == &empty_list
        )
+    {
+        return &truth;
+    } else if (
+            first->type == ATOM
+            &&
+            second->type == ATOM
+            &&
+            strcmp(first->value.atom, second->value.atom) == 0
+            &&
+            operand->next_item->next_item == &empty_list
+            )
     {
         return &truth;
     } else if (operand->next_item->next_item != &empty_list) {
         syntax_error("'eq' accepts only two arguments.\n\n");
         return &empty_list;
     } else {
-        syntax_error("thingy");
         return &empty_list;
     }
 }
 
 node* car(node* operand) {
-    if (operand->type == LIST && operand->next_item == &empty_list) {
-        return copy_single_node(operand->value.list);
+    node * first = eval(operand);
+    if (first->type == LIST && operand->next_item == &empty_list) {
+        return copy_single_node(first->value.list);
     } else {
         return &empty_list;
     }
 }
 
 node* cdr(node* operand) {
+    node* first = eval(operands);
+    node* second = eval(operands->next_item);
+
     if (operand->type == LIST && operand->next_item == &empty_list) {
         node* output = malloc(sizeof(node));
         output->type = LIST;
@@ -117,34 +125,67 @@ node* cdr(node* operand) {
     }
 }
 
-node* eval(node* n) {
-    node* operator = n->value.list;
-    node* operands = n->value.list->next_item;
+node* cons(node* operands) {
+    node* first = eval(operands);
+    node* second = eval(operands->next_item);
 
-    if (strcmp(operator->value.atom, "quote") == 0) {
-        return quote(operands);
-    } else if (strcmp(operator->value.atom, "atom") == 0) {
-        return atom(operands);
-    } else if (strcmp(operator->value.atom, "eq") == 0) {
-        return eq(operands);
-    } else if (strcmp(operator->value.atom, "car") == 0) {
-        return car(operands);
-    } else if (strcmp(operator->value.atom, "cdr") == 0) {
-        return cdr(operands);
+    node* output = malloc(sizeof(node));
+    output->type = LIST;
+    output->value.list = first;
+    output->value.list->next_item = copy_node(second->value.list);
+    output->next_item = &empty_list;
+    return output;
+}
+
+node* cond(node* operands) {
+    if (operands->value.list->type == ATOM) {
+        return &empty_list;
+    } else if (operands->value.list->type == LIST) {
+        return &empty_list;
+    }
+        return &empty_list;
+}
+
+
+node* eval(node* n) {
+    if (n->type == ATOM) {
+        return copy_single_node(n);
     }
 
+    node* operator = n->value.list;
+    node* first_operand = n->value.list->next_item;
+
+    if (strcmp(operator->value.atom, "quote") == 0) {
+        return quote(first_operand);
+    } else if (strcmp(operator->value.atom, "atom") == 0) {
+        return atom(eval(first_operand));
+
+    } else if (strcmp(operator->value.atom, "eq") == 0) {
+        return eq(first_operand);
+
+    } else if (strcmp(operator->value.atom, "car") == 0) {
+        return car(first_operand);
+    } else if (strcmp(operator->value.atom, "cdr") == 0) {
+        return cdr(first_operand);
+    } else if (strcmp(operator->value.atom, "cons") == 0) {
+        return cons(first_operand);
+
+    } else if (strcmp(operator->value.atom, "cond") == 0) {
+        return cond(first_operand);
+    }
+
+    syntax_error("Did you forget to add that function?\n");
     return &empty_list;
+}
+
+void evals(char * s) {
+    printf("\n");
+    debuglist(eval(makelist(s)));
+    printf("\n");
 }
 
 
 int main(){
-    node* test = makelist("(cdr (3 4 3 7 7 7))");
-    debuglist(test);
-    printf("\n\n\n");
-    debuglist(eval(test));
-
-    /* debuglist(eval(test)); */
-    /* printf("\n\n\n"); */
-    /* debuglist(quote(test)); */
+    evals("(cons 1 (quote (21)))");
     return 0;
 }
