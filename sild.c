@@ -111,13 +111,12 @@ node* car(node* operand) {
 }
 
 node* cdr(node* operand) {
-    node* first = eval(operands);
-    node* second = eval(operands->next_item);
+    node* first = eval(operand);
 
-    if (operand->type == LIST && operand->next_item == &empty_list) {
+    if (first->type == LIST && operand->next_item == &empty_list) {
         node* output = malloc(sizeof(node));
         output->type = LIST;
-        output->value.list = copy_node(operand->value.list->next_item);
+        output->value.list = copy_node(first->value.list->next_item);
         output->next_item = &empty_list;
         return output;
     } else {
@@ -139,11 +138,11 @@ node* cons(node* operands) {
 
 node* cond(node* operands) {
     if (operands->value.list->type == ATOM) {
-        return &empty_list;
+        return &truth;
     } else if (operands->value.list->type == LIST) {
-        return &empty_list;
+        return eval(operands->value.list);
     }
-        return &empty_list;
+    return &empty_list;
 }
 
 
@@ -186,6 +185,11 @@ void evals(char * s) {
 
 
 int main(){
-    evals("(cons 1 (quote (21)))");
+printf("\n\
+int main(){\n\
+    evals(\"(eq (atom (car (cons 4 (cdr (quote (1 2 3)))))) t)\");\n\
+    return 0;\n\
+}\n");
+    evals("(eq (atom (car (cons 4 (cdr (quote (1 2 3)))))) t)");
     return 0;
 }
