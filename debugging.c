@@ -5,9 +5,9 @@ void printtabs(int depth) {
 }
 
 void debuglistinner(node* l, int depth) {
-    if (l->type == TERM) {
+    if (l == &nil) {
         printtabs(depth);
-        printf("TERM: addr:%p, value=%p, next_item=%p  \n", l, l->value.list, l->next_item);
+        printf("NIL: addr:%p, value=%p, next_item=%p  \n", l, l->value.list, l->next_item);
         printtabs(depth - 1);
         printf("-----------------------------\n");
     } else if (l->type == LIST) {
@@ -29,7 +29,7 @@ void debuglist(node* l) {
 }
 
 void printlist(node* l) {
-    if (l->type == TERM) {
+    if (l == &nil) {
         printf(")");
     } else if (l->type == LIST) {
         printf("(");

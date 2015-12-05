@@ -26,7 +26,7 @@ node* copy_node(node* n) {
         output->next_item = copy_node(n->next_item);
         return output;
     } else {
-        return &empty_list;
+        return &nil;
     }
 }
 
@@ -35,36 +35,36 @@ node* copy_single_node(node* n) {
         node* output = malloc(sizeof(node));
         output->type = LIST;
         output->value.list = copy_node(n->value.list);
-        output->next_item = &empty_list;
+        output->next_item = &nil;
         return output;
     } else if (n->type == ATOM) {
         node* output = malloc(sizeof(node));
         output->type = ATOM;
         output->value.atom = n->value.atom;
-        output->next_item = &empty_list;
+        output->next_item = &nil;
         return output;
     }
-    return &empty_list;
+    return &nil;
 }
 
 node* quote(node* operand) {
-    if (operand->next_item == &empty_list) {
+    if (operand->next_item == &nil) {
         return copy_node(operand);
     } else {
         syntax_error("'quote' accepts only one argument.\n\n");
-        return &empty_list;
+        return &nil;
     }
 }
 
 node* atom(node* operand) {
     if (
-            (operand->type == ATOM && operand->next_item == &empty_list)
+            (operand->type == ATOM && operand->next_item == &nil)
             ||
-            (operand->type == LIST && operand->value.list == &empty_list)
+            (operand->type == LIST && operand->value.list == &nil)
        ){
         return &truth;
     } else {
-        return &empty_list;
+        return &nil;
     }
 }
 
@@ -74,11 +74,11 @@ node* eq(node* operand) {
     node* second = eval(operand->next_item);
 
     if (
-            (first->type == LIST && first->value.list == &empty_list)
+            (first->type == LIST && first->value.list == &nil)
             &&
-            (second->type == LIST && second->value.list == &empty_list)
+            (second->type == LIST && second->value.list == &nil)
             &&
-            operand->next_item->next_item == &empty_list
+            operand->next_item->next_item == &nil
        )
     {
         return &truth;
@@ -89,38 +89,38 @@ node* eq(node* operand) {
             &&
             strcmp(first->value.atom, second->value.atom) == 0
             &&
-            operand->next_item->next_item == &empty_list
+            operand->next_item->next_item == &nil
             )
     {
         return &truth;
-    } else if (operand->next_item->next_item != &empty_list) {
+    } else if (operand->next_item->next_item != &nil) {
         syntax_error("'eq' accepts only two arguments.\n\n");
-        return &empty_list;
+        return &nil;
     } else {
-        return &empty_list;
+        return &nil;
     }
 }
 
 node* car(node* operand) {
     node * first = eval(operand);
-    if (first->type == LIST && operand->next_item == &empty_list) {
+    if (first->type == LIST && operand->next_item == &nil) {
         return copy_single_node(first->value.list);
     } else {
-        return &empty_list;
+        return &nil;
     }
 }
 
 node* cdr(node* operand) {
     node* first = eval(operand);
 
-    if (first->type == LIST && operand->next_item == &empty_list) {
+    if (first->type == LIST && operand->next_item == &nil) {
         node* output = malloc(sizeof(node));
         output->type = LIST;
         output->value.list = copy_node(first->value.list->next_item);
-        output->next_item = &empty_list;
+        output->next_item = &nil;
         return output;
     } else {
-        return &empty_list;
+        return &nil;
     }
 }
 
@@ -132,17 +132,20 @@ node* cons(node* operands) {
     output->type = LIST;
     output->value.list = first;
     output->value.list->next_item = copy_node(second->value.list);
-    output->next_item = &empty_list;
+    output->next_item = &nil;
     return output;
 }
 
 node* cond(node* operands) {
-    if (operands->value.list->type == ATOM) {
-        return &truth;
-    } else if (operands->value.list->type == LIST) {
-        return eval(operands->value.list);
+    if (operands == &nil) {
+        return &nil;
     }
-    return &empty_list;
+
+    if (eval(operands->value.list) == &truth) {
+        return copy_node(eval(operands->value.list->next_item));
+    } else {
+        return cond(operands->next_item);
+    }
 }
 
 
@@ -173,23 +176,27 @@ node* eval(node* n) {
         return cond(first_operand);
     }
 
-    syntax_error("Did you forget to add that function?\n");
-    return &empty_list;
+    printf("Did you forget to add that function? - %s\n", operator->value.atom);
+    return &nil;
 }
 
+void prints(char * s) {
+    printf("\n");
+    debuglist(makelist(s));
+    printf("\n");
+}
 void evals(char * s) {
     printf("\n");
     debuglist(eval(makelist(s)));
     printf("\n");
 }
 
-
 int main(){
-printf("\n\
-int main(){\n\
-    evals(\"(eq (atom (car (cons 4 (cdr (quote (1 2 3)))))) t)\");\n\
-    return 0;\n\
-}\n");
-    evals("(eq (atom (car (cons 4 (cdr (quote (1 2 3)))))) t)");
+
+    char* test = "(cond ((eq 3 4) (quote 4)) ((eq 3 2) (quote 5)))";
+    prints(test);
+    evals(test);
+
+    printf("You will find the truth at: %p", &truth);
     return 0;
 }

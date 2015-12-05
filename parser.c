@@ -4,7 +4,7 @@
 #define TRUE 1
 #define FALSE 0
 
-enum { TERM, ATOM, LIST };
+enum { NIL, ATOM, LIST };
 
 union node_val {
     char* atom;
@@ -17,8 +17,8 @@ typedef struct node {
     struct node* next_item;
 } node;
 
-node empty_list = { TERM, {NULL}, NULL };
-node truth = { ATOM, {"t"}, &empty_list };
+node nil = { NIL, {NULL}, NULL };
+node truth = { ATOM, {"t"}, &nil };
 
 int count_list(char* s) {
     int depth = 1;
@@ -86,7 +86,7 @@ node * makelist(char* s) {
     if (s[0] == ' ' || s[0] == '\n' || s[0] == ',') {
         return makelist(s+1);
     } else if (s[0] == '\0' || s[0] == ')') {
-        return &empty_list;
+        return &nil;
     } else if (s[0] == '(') {
         node* output = malloc(sizeof(node));
         output->type = LIST;
