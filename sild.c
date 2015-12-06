@@ -1,16 +1,15 @@
 #include "parser.c"
 #include "debugging.c"
+#include "labels_list.c"
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 node* eval();
 
 void syntax_error(char* err) {
     printf("\nSyntax Error: %s", err);
 }
-
 
 node* copy_node(node* n) {
     if (n->type == LIST) {
@@ -150,12 +149,16 @@ node* cond(node* operands) {
 
 
 node* eval(node* n) {
-    if (n->type == ATOM) {
-        return copy_single_node(n);
-    }
-
     node* operator = n->value.list;
     node* first_operand = n->value.list->next_item;
+
+    if (n->type == ATOM) {
+        if (label_exists(n->value.atom, labels)) {
+            return find_label(n->value.atom, labels);
+        }
+
+        return copy_single_node(n);
+    }
 
     if (strcmp(operator->value.atom, "quote") == 0) {
         return quote(first_operand);
@@ -164,7 +167,6 @@ node* eval(node* n) {
 
     } else if (strcmp(operator->value.atom, "eq") == 0) {
         return eq(first_operand);
-
     } else if (strcmp(operator->value.atom, "car") == 0) {
         return car(first_operand);
     } else if (strcmp(operator->value.atom, "cdr") == 0) {
@@ -174,29 +176,33 @@ node* eval(node* n) {
 
     } else if (strcmp(operator->value.atom, "cond") == 0) {
         return cond(first_operand);
+    } else if (strcmp(operator->value.atom, "label") == 0) {
+        add_label(eval(first_operand)->value.atom, copy_node(eval(first_operand->next_item)));
+        return &truth;
+    } else {
+        return find_label(operator->value.atom, labels);
     }
+
 
     printf("Did you forget to add that function? - %s\n", operator->value.atom);
     return &nil;
 }
 
 void prints(char * s) {
-    printf("\n");
     debuglist(makelist(s));
     printf("\n");
 }
 void evals(char * s) {
-    printf("\n");
     debuglist(eval(makelist(s)));
     printf("\n");
 }
+void test_all() {
+    printf("You will find the truth at: %p\n\n", &truth);
+}
 
-int main(){
-
-    char* test = "(cond ((eq 3 4) (quote 4)) ((eq 3 2) (quote 5)))";
-    prints(test);
-    evals(test);
-
-    printf("You will find the truth at: %p", &truth);
+int main() {
+    evals("(label thing (quote 2))");
+    evals("(thing)");
     return 0;
 }
+

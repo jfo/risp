@@ -1,6 +1,4 @@
 (define false #f)
 (define true #t)
 
-(display
-  (not (not '(f))
-  ))
+(define d (display "jfdi"))
