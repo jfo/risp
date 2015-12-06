@@ -16,26 +16,21 @@ void add_label(char* name, node * value){
     labels = output;
 }
 
-int label_exists(char* l, label* labelslist) {
-    if (labelslist) {
-        if (strcmp(labelslist->name, l) == 0) {
-            return 1;
-        } else {
-            label_exists(l, labelslist->next);
-        }
-    }
-    return 0;
-}
-
-node * find_label(char* current_label, label * labelslist) {
+node * find_labelin(char* current_label, label* labelslist) {
     if (labelslist) {
         if (strcmp(labelslist->name, current_label) == 0) {
             return labelslist->value;
         } else {
-            find_label(current_label, labelslist->next);
+            return find_labelin(current_label, labelslist->next);
         }
     }
-    return &nil;
+
+    printf("ERROR: variable %s unbound", current_label);
+    exit(1);
+}
+
+node * find_label(char* current_label) {
+    return find_labelin(current_label, labels);
 }
 
 void print_labels(label * l) {

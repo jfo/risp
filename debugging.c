@@ -40,4 +40,3 @@ void printlist(node* l) {
         printlist(l->next_item);
     }
 }
-

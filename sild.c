@@ -46,6 +46,7 @@ node* copy_single_node(node* n) {
     return &nil;
 }
 
+
 node* quote(node* operand) {
     if (operand->next_item == &nil) {
         return copy_node(operand);
@@ -149,22 +150,17 @@ node* cond(node* operands) {
 
 
 node* eval(node* n) {
+    if (n->type == ATOM) {
+        return find_label(n->value.atom);
+    }
+
     node* operator = n->value.list;
     node* first_operand = n->value.list->next_item;
-
-    if (n->type == ATOM) {
-        if (label_exists(n->value.atom, labels)) {
-            return find_label(n->value.atom, labels);
-        }
-
-        return copy_single_node(n);
-    }
 
     if (strcmp(operator->value.atom, "quote") == 0) {
         return quote(first_operand);
     } else if (strcmp(operator->value.atom, "atom") == 0) {
         return atom(eval(first_operand));
-
     } else if (strcmp(operator->value.atom, "eq") == 0) {
         return eq(first_operand);
     } else if (strcmp(operator->value.atom, "car") == 0) {
@@ -173,16 +169,15 @@ node* eval(node* n) {
         return cdr(first_operand);
     } else if (strcmp(operator->value.atom, "cons") == 0) {
         return cons(first_operand);
-
     } else if (strcmp(operator->value.atom, "cond") == 0) {
         return cond(first_operand);
     } else if (strcmp(operator->value.atom, "label") == 0) {
-        add_label(eval(first_operand)->value.atom, copy_node(eval(first_operand->next_item)));
-        return &truth;
+        add_label(first_operand->value.atom, copy_node(eval(first_operand->next_item)));
+        return find_label(first_operand->value.atom);
     } else {
-        return find_label(operator->value.atom, labels);
+        operator = find_label(operator->value.atom);
+        eval(operator);
     }
-
 
     printf("Did you forget to add that function? - %s\n", operator->value.atom);
     return &nil;
@@ -193,16 +188,36 @@ void prints(char * s) {
     printf("\n");
 }
 void evals(char * s) {
+    printf("%s\n", s);
     debuglist(eval(makelist(s)));
     printf("\n");
 }
 void test_all() {
-    printf("You will find the truth at: %p\n\n", &truth);
+    evals("(quote arbitrary_thing)");
+
+    evals("(atom (quote arbitrary_thing))");
+    evals("(atom (quote ()))");
+    evals("(atom (quote (thingy)))");
+
+    evals("(car (quote (thing thang thung)))");
+    evals("(cdr (quote (thing thang thung)))");
+
+    evals("(cons (quote thing) (quote (thang thung)))");
+
+    evals("(cond ((eq (quote 2) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
+    evals("(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
+
+    evals("(label my_label (quote yayyyy))");
+
+    printf("You will find the truth at: %p\n", &truth);
+    evals("(eq my_label (quote yayyyy))");
+    printf("nil lives here: ");
+    debuglist(&nil);
+    evals("(eq my_label (quote noooo))");
 }
 
 int main() {
-    evals("(label thing (quote 2))");
-    evals("(thing)");
+    test_all();
     return 0;
 }
 
