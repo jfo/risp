@@ -40,3 +40,47 @@ void printlist(node* l) {
         printlist(l->next_item);
     }
 }
+
+void print_labels(label * l) {
+    if (l) {
+        printf("%s\n", l->name);
+        printf("%p\n", l->value);
+        debuglist(l->value);
+        printf("\n\n");
+        print_labels(l->next);
+    }
+}
+
+void prints(char * s) {
+    debuglist(makelist(s));
+    printf("\n");
+}
+void evals(char * s) {
+    printf("%s\n", s);
+    debuglist(eval(makelist(s)));
+    printf("\n");
+}
+void test_all() {
+    evals("(quote arbitrary_thing)");
+
+    evals("(atom (quote arbitrary_thing))");
+    evals("(atom (quote ()))");
+    evals("(atom (quote (thingy)))");
+
+    evals("(car (quote (thing thang thung)))");
+    evals("(cdr (quote (thing thang thung)))");
+
+    evals("(cons (quote thing) (quote (thang thung)))");
+
+    evals("(cond ((eq (quote 2) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
+    evals("(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
+    evals("(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
+
+    evals("(label my_label (quote yayyyy))");
+
+    printf("You will find the truth at: %p\n", &truth);
+    evals("(eq my_label (quote yayyyy))");
+    printf("nil lives here: ");
+    debuglist(&nil);
+    evals("(eq my_label (quote noooo))");
+}

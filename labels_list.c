@@ -33,12 +33,3 @@ node * find_label(char* current_label) {
     return find_labelin(current_label, labels);
 }
 
-void print_labels(label * l) {
-    if (l) {
-        printf("%s\n", l->name);
-        printf("%p\n", l->value);
-        debuglist(l->value);
-        printf("\n\n");
-        print_labels(l->next);
-    }
-}
