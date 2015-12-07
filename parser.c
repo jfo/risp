@@ -82,6 +82,7 @@ char* return_string(char* s){
     return out;
 }
 
+void debuglist();
 node * makelist(char* s) {
     if (s[0] == ' ' || s[0] == '\n' || s[0] == ',') {
         return makelist(s+1);
@@ -101,7 +102,7 @@ node * makelist(char* s) {
         output->type = LIST;
         output->value.list = quote;
         quote->next_item = input;
-        output->next_item = makelist(s + count_list(s));
+        output->next_item = makelist(s + count_list(s + 1) + 2);
         return output;
     } else if (s[0] == '\'') {
         node* quote = malloc(sizeof(node));

@@ -1,10 +1,4 @@
-(define thing
-
-   (lambda (x y) (cons (list '(x y x y)) (list '(y y y y))))
-   )
-
-
-  (define i (thing 2 3))
+(define thing (lambda (x) x))
 (display
-  (cons 'a '(e))
-  )
+  (eq? '(1) '(1))
+)

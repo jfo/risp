@@ -23,7 +23,7 @@ node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
         node* output = malloc(sizeof(node));
         output->type = ATOM;
         if (strcmp(key->value.atom, n->value.atom) == 0) {
-            output->value.atom = new_sub->value.atom;
+            output->value.atom = eval(new_sub)->value.atom;
         } else {
             output->value.atom = n->value.atom;
         }
@@ -93,7 +93,7 @@ node* atom(node* operand) {
 
 node* eq(node* operand) {
 
-    node* first = eval(operand);
+    node* first = eval(copy_node(operand));
     node* second = eval(operand->next_item);
 
     if (
@@ -189,7 +189,6 @@ node* eval(node* n) {
 
     node* operator = n->value.list;
     node* first_operand = n->value.list->next_item;
-
 
     if (strcmp(operator->value.atom, "quote") == 0) {
         return quote(first_operand);
