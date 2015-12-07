@@ -16,6 +16,7 @@ void add_label(char* name, node * value){
     labels = output;
 }
 
+void debuglist();
 node * find_labelin(char* current_label, label* labelslist) {
     if (labelslist) {
         if (strcmp(labelslist->name, current_label) == 0) {

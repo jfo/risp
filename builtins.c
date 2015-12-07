@@ -4,6 +4,32 @@ void syntax_error(char* err) {
     printf("\nSyntax Error: %s", err);
 }
 
+node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
+    if (n->type == LIST) {
+        node* output = malloc(sizeof(node));
+        output->type = LIST;
+
+        output->value.list = copy_node_with_substitution(n->value.list, new_sub, key);
+
+        output->next_item = copy_node_with_substitution(n->next_item, new_sub, key);
+        return output;
+    } else if (n->type == ATOM) {
+        node* output = malloc(sizeof(node));
+        output->type = ATOM;
+
+        if (strcmp(key->value.atom, n->value.atom) == 0) {
+            output->value.atom = new_sub->value.atom;
+        } else {
+            output->value.atom = n->value.atom;
+        }
+
+        output->next_item = copy_node_with_substitution(n->next_item, new_sub, key);
+        return output;
+    } else {
+        return &nil;
+    }
+}
+
 node* copy_node(node* n) {
     if (n->type == LIST) {
         node* output = malloc(sizeof(node));
@@ -141,6 +167,21 @@ node* cond(node* operands) {
     }
 }
 
+void debuglist();
+
+node* lambda(node* full_list) {
+    node* internal_vars = full_list->value.list->value.list->next_item;
+    node* target_list = internal_vars->next_item;
+    node* external_values = full_list->value.list->next_item;
+
+
+    node * thing = copy_node_with_substitution(target_list, eval(external_values), internal_vars->value.list);
+
+
+    return eval(thing);
+}
+
+
 node* eval(node* n) {
     if (n->type == ATOM) {
         return find_label(n->value.atom);
@@ -148,6 +189,7 @@ node* eval(node* n) {
 
     node* operator = n->value.list;
     node* first_operand = n->value.list->next_item;
+
 
     if (strcmp(operator->value.atom, "quote") == 0) {
         return quote(first_operand);
@@ -164,11 +206,14 @@ node* eval(node* n) {
     } else if (strcmp(operator->value.atom, "cond") == 0) {
         return cond(first_operand);
     } else if (strcmp(operator->value.atom, "label") == 0) {
-        add_label(first_operand->value.atom, copy_node(eval(first_operand->next_item)));
+        add_label(first_operand->value.atom, copy_node(first_operand->next_item));
         return find_label(first_operand->value.atom);
+    } else if (operator->type == LIST && strcmp(operator->value.list->value.atom, "lambda") == 0) {
+        return lambda(n);
     } else {
-        operator = find_label(operator->value.atom);
-        eval(operator);
+        n->value.list = find_label(operator->value.atom);
+        n->value.list->next_item = first_operand;
+        return eval(n);
     }
 
     printf("Did you forget to add that function? - %s\n", operator->value.atom);

@@ -83,4 +83,7 @@ void test_all() {
     printf("nil lives here: ");
     debuglist(&nil);
     evals("(eq my_label (quote noooo))");
+
+    evals("(eq my_label (quote noooo))");
+    evals("(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))");
 }
