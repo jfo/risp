@@ -24,10 +24,6 @@ void debuglistinner(node* l, int depth) {
     }
 }
 
-void debuglist(node* l) {
-    debuglistinner(l, 0);
-}
-
 void printlist(node* l) {
     if (l == &nil) {
         printf(")");
@@ -40,6 +36,13 @@ void printlist(node* l) {
         printlist(l->next_item);
     }
 }
+
+void debuglist(node* l) {
+    printlist(l);
+    printf("\n");
+    debuglistinner(l, 0);
+}
+
 
 void print_labels(label * l) {
     if (l) {

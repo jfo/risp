@@ -4,7 +4,6 @@
 #include "debugging.c"
 
 int main() {
-    evals("(label thing (lambda (x) (quote (x x x x))))");
-    evals("(thing (quote 7))");
+    evals("(cons '4 '(3))");
     return 0;
 }

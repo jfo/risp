@@ -87,6 +87,38 @@ node * makelist(char* s) {
         return makelist(s+1);
     } else if (s[0] == '\0' || s[0] == ')') {
         return &nil;
+    } else if (s[0] == '\'' && s[1] == '(') {
+        node* quote = malloc(sizeof(node));
+        quote->type = ATOM;
+        quote->value.atom = "quote";
+
+        node* input = malloc(sizeof(node));
+        input->type = LIST;
+        input->value.list = makelist(s+2);
+        input->next_item = &nil;
+
+        node* output = malloc(sizeof(node));
+        output->type = LIST;
+        output->value.list = quote;
+        quote->next_item = input;
+        output->next_item = makelist(s + count_list(s));
+        return output;
+    } else if (s[0] == '\'') {
+        node* quote = malloc(sizeof(node));
+        quote->type = ATOM;
+        quote->value.atom = "quote";
+
+        node* input = malloc(sizeof(node));
+        input->type = ATOM;
+        input->value.atom = return_string(s+1);
+        input->next_item = &nil;
+
+        node* output = malloc(sizeof(node));
+        output->type = LIST;
+        output->value.list = quote;
+        quote->next_item = input;
+        output->next_item = makelist(s + count_string_length(s));
+        return output;
     } else if (s[0] == '(') {
         node* output = malloc(sizeof(node));
         output->type = LIST;
