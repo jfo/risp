@@ -26,6 +26,7 @@ node * find_labelin(char* current_label, label* labelslist) {
         }
     }
 
+    printf("%s", current_label);
     printf("ERROR: variable %s unbound", current_label);
     exit(1);
 }

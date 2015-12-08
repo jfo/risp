@@ -4,6 +4,12 @@
 #include "debugging.c"
 
 int main() {
-    test_all();
+
+evals("\
+        ((lambda (x) x) '1)\
+");
+    /* evals("\ */
+  /* (thing1 '1)\ */
+/* "); */
     return 0;
 }

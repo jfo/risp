@@ -5,6 +5,9 @@ void syntax_error(char* err) {
 }
 
 node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
+
+    /* node * output = copy_node_with_substitution(target_list, external_values, internal_vars); */
+
     if ((new_sub->type == NIL && key->type != NIL) || 
        (new_sub->type != NIL && key->type == NIL)) {
         printf("ArityError at: %s", n->value.atom);
@@ -21,9 +24,8 @@ node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
         return output;
     } else if (n->type == ATOM) {
         node* output = malloc(sizeof(node));
-        output->type = ATOM;
         if (strcmp(key->value.atom, n->value.atom) == 0) {
-            output->value.atom = eval(new_sub)->value.atom;
+            output = new_sub;
         } else {
             output->value.atom = n->value.atom;
         }
@@ -174,11 +176,11 @@ node* cond(node* operands) {
 void debuglist();
 
 node* lambda(node* full_list) {
-    node* internal_vars = full_list->value.list->value.list->next_item;
-    node* target_list = internal_vars->next_item;
+    node* internal_vars = copy_single_node(full_list->value.list->value.list->next_item);
+    node* target_list = full_list->value.list->value.list->next_item->next_item;
     node* external_values = full_list->value.list->next_item;
     node * output = copy_node_with_substitution(target_list, external_values, internal_vars->value.list);
-    return eval(output);
+    return output;
 }
 
 
@@ -211,6 +213,13 @@ node* eval(node* n) {
         return quote(n);
     } else if (operator->type == LIST && strcmp(operator->value.list->value.atom, "lambda") == 0) {
         return lambda(n);
+    } else if (operator->type == LIST) {
+        node* output = malloc(sizeof(node));
+        output->type = ATOM;
+        output = eval(operator);
+        output->next_item = first_operand;
+        n->value.list = output;
+        return eval(n->value.list);
     } else {
         n->value.list = find_label(operator->value.atom);
         n->value.list->next_item = first_operand;
