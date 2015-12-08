@@ -82,7 +82,6 @@ char* return_string(char* s){
     return out;
 }
 
-void debuglist();
 node * makelist(char* s) {
     if (s[0] == ' ' || s[0] == '\n' || s[0] == ',') {
         return makelist(s+1);

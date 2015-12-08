@@ -64,29 +64,27 @@ void evals(char * s) {
     printf("\n");
 }
 void test_all() {
-    evals("(quote arbitrary_thing)");
+    char ** values = (char *[]){
+    "(quote arbitrary_thing)",
+    "(atom (quote arbitrary_thing))",
+    "(atom (quote ()))",
+    "(atom (quote (thingy)))",
+    "(car (quote (thing thang thung)))",
+    "(cdr (quote (thing thang thung)))",
+    "(cons (quote thing) (quote (thang thung)))",
+    "(cond ((eq (quote 2) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))",
+    "(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))",
+    "(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))",
+    "(label my_label (quote yayyyy))",
+    "(eq my_label (quote yayyyy))",
+    "(eq my_label (quote noooo))",
+    "(eq my_label (quote noooo))",
+    "(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))",
+    "derr"
+    };
 
-    evals("(atom (quote arbitrary_thing))");
-    evals("(atom (quote ()))");
-    evals("(atom (quote (thingy)))");
-
-    evals("(car (quote (thing thang thung)))");
-    evals("(cdr (quote (thing thang thung)))");
-
-    evals("(cons (quote thing) (quote (thang thung)))");
-
-    evals("(cond ((eq (quote 2) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
-    evals("(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
-    evals("(cond ((eq (quote 1) (quote 2)) (quote first)) ((eq (quote 2) (quote 2)) (quote second)))");
-
-    evals("(label my_label (quote yayyyy))");
-
-    printf("You will find the truth at: %p\n", &truth);
-    evals("(eq my_label (quote yayyyy))");
-    printf("nil lives here: ");
-    debuglist(&nil);
-    evals("(eq my_label (quote noooo))");
-
-    evals("(eq my_label (quote noooo))");
-    evals("(cons (quote a) (cons (quote b) (cons (quote c) (quote ()))))");
+    printf("%lu\n", sizeof(values));
+    for (int i = 0; strcmp(values[i], "derr") ; i++) {
+        printf("%s\n%p\n", values[i], &values[i]);
+    }
 }

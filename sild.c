@@ -4,9 +4,6 @@
 #include "debugging.c"
 
 int main() {
-
-    debuglist(makelist("(eq '() (quote ()))"));
-    evals("(eq '1 '1)");
-
+    test_all();
     return 0;
 }
