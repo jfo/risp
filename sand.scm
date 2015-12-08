@@ -40,7 +40,7 @@
 
 
   (define thing ((lambda (x) x) '1))
-   thing
+  ((lambda (x) x) 1)
 
 
   ))

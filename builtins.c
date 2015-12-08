@@ -4,16 +4,20 @@ void syntax_error(char* err) {
     printf("\nSyntax Error: %s", err);
 }
 
-node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
+node* copy_node();
+node* copy_node_with_substitution(node* n, node* key, node* new_sub) {
+    /* debuglist(n); */
+    /* debuglist(key); */
+    /* debuglist(new_sub); */
 
-    /* node * output = copy_node_with_substitution(target_list, external_values, internal_vars); */
-
-    if ((new_sub->type == NIL && key->type != NIL) || 
+    if ((new_sub->type == NIL && key->type != NIL) ||
        (new_sub->type != NIL && key->type == NIL)) {
         printf("ArityError at: %s", n->value.atom);
         exit(3);
     } else if (new_sub->type == NIL && key->type == NIL) {
         return n;
+    } else if (n->type == NIL) {
+        return &nil;
     }
 
     if (n->type == LIST) {
@@ -25,9 +29,9 @@ node* copy_node_with_substitution(node* n, node* new_sub, node* key) {
     } else if (n->type == ATOM) {
         node* output = malloc(sizeof(node));
         if (strcmp(key->value.atom, n->value.atom) == 0) {
-            output = new_sub;
+            output = copy_node(new_sub);
         } else {
-            output->value.atom = n->value.atom;
+            output = copy_node(n);
         }
         output->next_item = copy_node_with_substitution(n->next_item, new_sub, key);
         return copy_node_with_substitution(output, new_sub->next_item, key->next_item);
@@ -179,7 +183,7 @@ node* lambda(node* full_list) {
     node* internal_vars = copy_single_node(full_list->value.list->value.list->next_item);
     node* target_list = full_list->value.list->value.list->next_item->next_item;
     node* external_values = full_list->value.list->next_item;
-    node * output = copy_node_with_substitution(target_list, external_values, internal_vars->value.list);
+    node * output = copy_node_with_substitution(target_list, internal_vars->value.list, external_values);
     return output;
 }
 
@@ -212,7 +216,7 @@ node* eval(node* n) {
     } else if (strcmp(operator->value.atom, "lambda") == 0) {
         return quote(n);
     } else if (operator->type == LIST && strcmp(operator->value.list->value.atom, "lambda") == 0) {
-        return lambda(n);
+        return eval(lambda(n));
     } else if (operator->type == LIST) {
         node* output = malloc(sizeof(node));
         output->type = ATOM;

@@ -6,10 +6,7 @@
 int main() {
 
 evals("\
-        ((lambda (x) x) '1)\
+        ((lambda (x) (atom x)) '1)\
 ");
-    /* evals("\ */
-  /* (thing1 '1)\ */
-/* "); */
     return 0;
 }
