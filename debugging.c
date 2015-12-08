@@ -38,7 +38,6 @@ void printlist(node* l) {
 }
 
 void debuglist(node* l) {
-    printlist(l);
     printf("\n");
     debuglistinner(l, 0);
 }
@@ -66,8 +65,15 @@ void evals(char * s) {
 void test_all() {
     char ** values = (char *[]){
     "(quote arbitrary_thing)",
+    "'arbitrary_thing",
+
     "(atom (quote arbitrary_thing))",
+    "(atom 'arbitrary_thing)",
+
     "(atom (quote ()))",
+
+    "(atom '())",
+
     "(atom (quote (thingy)))",
     "(car (quote (thing thang thung)))",
     "(cdr (quote (thing thang thung)))",
@@ -83,8 +89,9 @@ void test_all() {
     "derr"
     };
 
-    printf("%lu\n", sizeof(values));
+    /* printf("%s\n", values[i]); */
     for (int i = 0; strcmp(values[i], "derr") ; i++) {
-        printf("%s\n%p\n", values[i], &values[i]);
+        evals(values[i]);
+        getchar();
     }
 }
